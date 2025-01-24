@@ -1,118 +1,47 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useEffect } from 'react';
+import { Alert, SafeAreaView } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { requestMultiple, PERMISSIONS, RESULTS } from "react-native-permissions";
+import ProtectedNavigation from './src/navigation/ProtectedNavigation';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+const App = () => {
+  const requestPermissions = async () => {
+    try {
+      const statuses = await requestMultiple([
+        PERMISSIONS.ANDROID.READ_CONTACTS,
+        PERMISSIONS.ANDROID.WRITE_CONTACTS,
+        PERMISSIONS.ANDROID.READ_CALL_LOG,
+        PERMISSIONS.ANDROID.WRITE_CALL_LOG,
+        PERMISSIONS.ANDROID.ANSWER_PHONE_CALLS,
+      ]);
+      
+      const deniedPermissions = Object.entries(statuses).filter(
+        ([, status]) => status === RESULTS.DENIED,
+      );
+      if (deniedPermissions.length > 0) {
+        Alert.alert(
+          'Permissions Required',
+          'Some permissions are necessary for the app to function properly. Please grant them in the app settings.',
+        );
+      }
+    } catch (error) {
+      console.error('Error requesting permissions:', error);
+    }
   };
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+  useEffect(() => {
+    requestPermissions();
+    
+  }, []);
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+
+  return (
+    <NavigationContainer>
+      <SafeAreaView style={{ flex: 1 }}>
+        <ProtectedNavigation />
+      </SafeAreaView>
+    </NavigationContainer>
+  );
+};
 
 export default App;
