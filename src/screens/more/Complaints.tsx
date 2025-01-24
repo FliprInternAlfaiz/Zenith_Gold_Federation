@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import firestore from "@react-native-firebase/firestore";
+import { firebaseConfig } from "../../config/firebase";
+import { initializeApp } from "@react-native-firebase/app";
 
 const Complaints = () => {
   const [name, setName] = useState("");
@@ -19,6 +21,8 @@ const Complaints = () => {
       ToastAndroid.show("Please fill all the fields", ToastAndroid.SHORT);
     } else {
       try {
+            const app = initializeApp(firebaseConfig);
+                  console.log(app)
         const id = `${name}-${email}-${Date.now()}`;
         await firestore().collection("Complaints").doc(id).set({
           name,

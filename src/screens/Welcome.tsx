@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: '55%',
-    height: 50,
+    height: 60,
     marginVertical: 10,
   },
   image: {

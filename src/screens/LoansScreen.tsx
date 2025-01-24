@@ -7,6 +7,7 @@ import {
   Image,
 } from "react-native";
 import { firebaseConfig } from "../config/firebase";
+import { initializeApp } from "@react-native-firebase/app";
 
 const LoansScreen = ({ navigation }) => {
   const loanPrograms = [
@@ -17,6 +18,9 @@ const LoansScreen = ({ navigation }) => {
     { title: "Professional Loan Program", screen: "Professional" },
     { title: "Salaried Loan Program", screen: "Salaried" },
   ];
+
+  const app = initializeApp(firebaseConfig);
+  console.log(app);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

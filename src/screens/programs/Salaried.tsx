@@ -49,7 +49,8 @@ const Salaried = () => {
           bankStatements,
           loanAmount,
           existingLoans,
-        }).then(() => {
+        })
+
           ToastAndroid.show(
             "Loan application submitted successfully",
             ToastAndroid.SHORT
@@ -66,7 +67,7 @@ const Salaried = () => {
           setBankStatements("");
           setLoanAmount("");
           setExistingLoans("");
-        });
+        
       } catch (error) {
         console.error("Error sending data to Firestore:", error);
         ToastAndroid.show(

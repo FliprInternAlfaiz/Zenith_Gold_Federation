@@ -12,25 +12,22 @@ import {
   Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {TextInput, Button} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
+import {TextInput} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
-import {db} from '../config/firebase';
-import firestore, {
-  FirebaseFirestoreTypes,
-} from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-
-interface FavIconData {
-  WhatsApp: string;
-  email: string;
-  isWhatsApp: boolean;
-}
+import { firebaseConfig} from '../config/firebase';
+import { initializeApp } from '@react-native-firebase/app';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 
-const HomeScreen = () => {
-  const navigation = useNavigation();
+interface FavIconData {
+    WhatsApp: string;
+    email: string;
+    isWhatsApp: boolean;
+  }
+
+const HomeScreen = ({navigation}) => {
   const [name, setName] = useState('');
   const [motherName, setMotherName] = useState('');
   const [fatherName, setFatherName] = useState('');
@@ -68,6 +65,7 @@ const HomeScreen = () => {
       return;
     }
     try {
+      const app = initializeApp(firebaseConfig);
       const id = `${name}-${email}-${Date.now()}`;
 
       ToastAndroid.show('Sending...', ToastAndroid.LONG);
@@ -87,7 +85,6 @@ const HomeScreen = () => {
         officeAddress,
         monthlyIncome,
       });
-      console.log('Document written with ID: ', id);
       ToastAndroid.show('Sent!', ToastAndroid.SHORT);
       setName('');
       setMotherName('');
@@ -114,11 +111,9 @@ const HomeScreen = () => {
         if (value !== null) {
           const myBooleanValue = JSON.parse(value);
           if (!myBooleanValue) {
-            console.log('Value is false');
             navigation.navigate('Welcome');
           }
         } else {
-          console.log('No value found for the key');
           navigation.navigate('Welcome');
         }
       })
@@ -127,38 +122,39 @@ const HomeScreen = () => {
       });
   }, []);
 
-  useEffect(() => {
-    const docRef = firestore().doc('favIcon/favIcon');
-    console.log(docRef);
+    useEffect(() => {
+        const docRef = firestore().collection("favIcon").doc("favIcon");
 
-    const unsubscribe = docRef.onSnapshot(
-      (docSnap: FirebaseFirestoreTypes.DocumentSnapshot) => {
-        if (docSnap.exists) {
-          const {WhatsApp, email, isWhatsApp} = docSnap.data() as FavIconData;
-          setData({WhatsApp, email, isWhatsApp});
-        } else {
-          console.log('No such document!');
-        }
-      },
-      error => {
-        console.error('Error fetching document:', error);
-        ToastAndroid.show('Error fetching document', ToastAndroid.SHORT);
-      },
-    );
-
-    return () => unsubscribe();
-  }, []);
+        const unsubscribe = docRef.onSnapshot(
+            (docSnap) => {
+              if (docSnap.exists) {
+                const docData = docSnap.data() as FavIconData;
+                const { WhatsApp, email, isWhatsApp } = docData;
+                setData({ WhatsApp, email, isWhatsApp });
+              } else {
+                console.log("No such document!");
+              }
+            },
+            (error) => {
+              console.error("Error fetching document:", error);
+            }
+          );
+          
+      return () => unsubscribe();
+    }, []);
 
   const onFavPress = () => {
-    const url = data && data.isWhatsApp
-      ? `whatsapp://send?phone=91${data.WhatsApp}`
-      : data ? `mailto:${data.email}` : '';
-    Linking.openURL(url).catch(err =>
-      console.error(
-        `Error opening ${data?.isWhatsApp ? 'WhatsApp' : 'email'}:`,
-        err,
-      ),
-    );
+    if (data?.isWhatsApp) {
+      const url = `whatsapp://send?phone=91${data.WhatsApp}`;
+      Linking.openURL(url).catch(err =>
+        console.error('Error opening WhatsApp:', err),
+      );
+    } else {
+      const url = `mailto:${data?.email}`;
+      Linking.openURL(url).catch(err =>
+        console.error('Error opening email:', err),
+      );
+    }
   };
 
   return (

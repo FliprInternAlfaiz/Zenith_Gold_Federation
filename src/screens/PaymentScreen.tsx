@@ -11,6 +11,8 @@ import {
 import { TextInput, Button } from "react-native-paper";
 import firestore from "@react-native-firebase/firestore";
 import { NavigationProp } from "@react-navigation/native";
+import { firebaseConfig } from "../config/firebase";
+import { initializeApp } from "@react-native-firebase/app";
 
 // Define the theme separately
 const textInputTheme = {
@@ -39,6 +41,8 @@ const PaymentScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
       );
     } else {
       try {
+          const app = initializeApp(firebaseConfig);
+          console.log(app)
         ToastAndroid.show("Sending...", ToastAndroid.LONG);
         const id = `${name}-${email}-${Date.now()}`;
         await firestore().collection("PaymentRequests").doc(id).set({

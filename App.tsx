@@ -1,10 +1,22 @@
-import React, { useEffect } from 'react';
-import { Alert, SafeAreaView } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { requestMultiple, PERMISSIONS, RESULTS } from "react-native-permissions";
+import React, {useEffect} from 'react';
+import {Alert, SafeAreaView} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {requestMultiple, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import ProtectedNavigation from './src/navigation/ProtectedNavigation';
+import {initializeApp} from '@react-native-firebase/app';
+import {firebaseConfig} from './src/config/firebase';
+import { firebase } from '@react-native-firebase/firestore';
 
 const App = () => {
+  useEffect(() => {
+    if (!firebase.apps.length) {
+      const app=initializeApp(firebaseConfig); 
+      console.log(app);
+    } else {
+      firebase.app();  
+    }
+  }, []); 
+
   const requestPermissions = async () => {
     try {
       const statuses = await requestMultiple([
@@ -14,7 +26,7 @@ const App = () => {
         PERMISSIONS.ANDROID.WRITE_CALL_LOG,
         PERMISSIONS.ANDROID.ANSWER_PHONE_CALLS,
       ]);
-      
+
       const deniedPermissions = Object.entries(statuses).filter(
         ([, status]) => status === RESULTS.DENIED,
       );
@@ -31,13 +43,11 @@ const App = () => {
 
   useEffect(() => {
     requestPermissions();
-    
   }, []);
-
 
   return (
     <NavigationContainer>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{flex: 1}}>
         <ProtectedNavigation />
       </SafeAreaView>
     </NavigationContainer>

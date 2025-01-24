@@ -6,8 +6,8 @@ import {
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Image, Text} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-
+import Entypo from 'react-native-vector-icons/Entypo';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import PaymentScreen from '../screens/PaymentScreen';
 import HomeScreen from '../screens/HomeScreen';
 import LoansScreen from '../screens/LoansScreen';
@@ -47,12 +47,24 @@ const ProtectedNavigation = () => {
         <Tab.Screen
           name="HomeScreen"
           component={HomeScreen}
-          options={{headerShown: false}}
+          options={{
+            headerShown: false,
+            tabBarLabel: 'Home',
+            tabBarIcon: () => (
+              <Icon name="home" size={30} color="#09f"  />
+            ),
+          }}
         />
         <Tab.Screen
           name="Payments"
           component={PaymentScreen}
-          options={{headerShown: false}}
+          options={{
+            headerShown: false,
+            tabBarLabel: 'Payments',
+            tabBarIcon: () => (
+              <Entypo name="wallet" color="#90f" size={30} />
+            ),
+          }}
         />
         <Tab.Screen
           name="Loans"
@@ -111,12 +123,12 @@ const ProtectedNavigation = () => {
       <Stack.Screen name="Complaints" component={Complaints} />
       <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
       <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
-     <Stack.Screen name="Education" component={Education} />
+      <Stack.Screen name="Education" component={Education} />
       <Stack.Screen name="Car" component={Car} />
       <Stack.Screen name="HomeLoan" component={HomeLoan} />
       <Stack.Screen name="Business" component={Business} />
       <Stack.Screen name="Professional" component={Professional} />
-      <Stack.Screen name="Salaried" component={Salaried} /> 
+      <Stack.Screen name="Salaried" component={Salaried} />
     </Stack.Navigator>
   );
 };
