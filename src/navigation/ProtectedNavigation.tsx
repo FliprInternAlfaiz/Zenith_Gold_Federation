@@ -38,45 +38,73 @@ const ProtectedNavigation = () => {
   const MyTabs = () => {
     return (
       <Tab.Navigator
-        initialRouteName="HomeScreen"
-        screenOptions={{
-          tabBarActiveTintColor: '#09e',
-          tabBarInactiveTintColor: '#555',
-          tabBarStyle: {backgroundColor: '#fff'},
-        }}>
-        <Tab.Screen
-          name="HomeScreen"
-          component={HomeScreen}
-          options={{
-            headerShown: false,
-            tabBarLabel: 'Home',
-            tabBarIcon: () => (
-              <Icon name="home" size={30} color="#09f"  />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Payments"
-          component={PaymentScreen}
-          options={{
-            headerShown: false,
-            tabBarLabel: 'Payments',
-            tabBarIcon: () => (
-              <Entypo name="wallet" color="#90f" size={30} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Loans"
-          component={LoansScreen}
-          options={{headerShown: false}}
-        />
-        <Tab.Screen
-          name="More"
-          component={MoreScreen}
-          options={{headerShown: false}}
-        />
-      </Tab.Navigator>
+      initialRouteName="HomeScreen"
+      screenOptions={{
+        tabBarActiveTintColor: "#09e",
+        tabBarInactiveTintColor: "#555",
+        tabBarStyle: {
+          height: 80,
+          paddingTop:10,
+          backgroundColor: '#fff',
+          borderTopWidth: 0,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 5,
+        },
+      }}
+      >
+      <Tab.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Home',
+          tabBarLabelStyle: { fontSize: 16, fontWeight: 'bold' },
+          tabBarIcon: ({ color, focused }) => {
+            const iconName = focused ? 'home' : 'home-outline';
+            return <Ionicons name={iconName} size={22} color={color} />;
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Payments"
+        component={PaymentScreen}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Payments',
+          tabBarLabelStyle: { fontSize: 16, fontWeight: 'bold' },
+          tabBarIcon: ({ color, focused }) => (
+            <Entypo name="wallet" size={22} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Loans"
+        component={LoansScreen}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Loans',
+          tabBarLabelStyle: { fontSize: 16, fontWeight: 'bold' },
+          tabBarIcon: ({ color, focused }) => (
+            <Icon name="opencart" size={22} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="More"
+        component={MoreScreen}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'More',
+          tabBarLabelStyle: { fontSize: 16, fontWeight: 'bold' },
+          tabBarIcon: ({ color, focused }) => (
+            <Entypo name="menu" size={22} color={color} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
     );
   };
 

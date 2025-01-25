@@ -14,9 +14,8 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {TextInput} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
-import firestore from '@react-native-firebase/firestore';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-import { firebaseConfig} from '../config/firebase';
+import { firebaseConfig, firestore} from '../config/firebase';
 import { initializeApp } from '@react-native-firebase/app';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
@@ -43,6 +42,12 @@ const HomeScreen = ({navigation}) => {
   const [officeAddress, setOfficeAddress] = useState('');
   const [monthlyIncome, setMonthlyIncome] = useState('');
   const [data, setData] = useState<FavIconData | null>(null);
+
+  useEffect(() => {
+    const app = initializeApp(firebaseConfig);
+    console.log(app)
+  }, [])
+  
 
   const submitForm = async () => {
     if (
@@ -123,6 +128,8 @@ const HomeScreen = ({navigation}) => {
   }, []);
 
     useEffect(() => {
+      const app = initializeApp(firebaseConfig);
+      console.log(app);
         const docRef = firestore().collection("favIcon").doc("favIcon");
 
         const unsubscribe = docRef.onSnapshot(
