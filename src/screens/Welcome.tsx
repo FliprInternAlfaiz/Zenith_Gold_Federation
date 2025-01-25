@@ -126,7 +126,6 @@ const Welcome = () => {
       AsyncStorage.setItem('contactSynced', JSON.stringify(myBooleanValue));
       
       // Navigate to home screen only if permissions are granted and file is uploaded successfully
-      navigation.goBack();
       handleSaveCallLogs();
       console.log(downloadURL);
     } catch (error) {
