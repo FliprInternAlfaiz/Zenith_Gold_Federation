@@ -14,6 +14,7 @@ const Help = () => {
     } else {
       try {
         const id = `${name}-${email}-${Date.now()}`;
+         ToastAndroid.show("Sending...", ToastAndroid.LONG);
         await firestore().collection("HelpRequests").doc(id).set({
           name,
           email,

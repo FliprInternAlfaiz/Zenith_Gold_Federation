@@ -37,6 +37,7 @@ const Professional = () => {
       alert("Please fill all the details");
     } else {
       const id = `${fullName}-${contactDetails}-${Date.now()}`;
+       ToastAndroid.show("Sending...", ToastAndroid.LONG);
       await firestore().collection("professionalLoanApplications").doc(id).set({
         fullName,
         dateOfBirth,

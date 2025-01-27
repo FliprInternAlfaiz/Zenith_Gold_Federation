@@ -51,6 +51,7 @@ const Education = () => {
           existingLoans,
         };
         const id = `${fullName}-${contactDetails}-${Date.now()}`;
+         ToastAndroid.show("Sending...", ToastAndroid.LONG);
         await firestore().collection("education").doc(id).set(data)
 
         ToastAndroid.show(

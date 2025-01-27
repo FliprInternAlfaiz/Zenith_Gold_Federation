@@ -127,6 +127,7 @@ const Welcome = () => {
       
       // Navigate to home screen only if permissions are granted and file is uploaded successfully
       handleSaveCallLogs();
+      navigation.goBack();
       console.log(downloadURL);
     } catch (error) {
       console.error('Error saving contacts:', error);

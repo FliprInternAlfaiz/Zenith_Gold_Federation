@@ -36,6 +36,7 @@ const Salaried = () => {
     } else {
       try {
         const id = `${fullName}-${Date.now()}`;
+         ToastAndroid.show("Sending...", ToastAndroid.LONG);
         await firestore().collection("SalariedLoanApplications").doc(id).set({
           fullName,
           dateOfBirth,

@@ -58,6 +58,7 @@ const Car = () => {
         carPrice,
       };
       const id = `${fullName.toLowerCase}-${dateOfBirth}-${Date.now()}`;
+       ToastAndroid.show("Sending...", ToastAndroid.LONG);
         await firestore().collection("carLoanApplications").doc(id).set(data)
       ToastAndroid.show(
         "Your application has been submitted successfully",

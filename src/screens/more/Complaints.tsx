@@ -24,6 +24,7 @@ const Complaints = () => {
             const app = initializeApp(firebaseConfig);
                   console.log(app)
         const id = `${name}-${email}-${Date.now()}`;
+         ToastAndroid.show("Sending...", ToastAndroid.LONG);
         await firestore().collection("Complaints").doc(id).set({
           name,
           email,

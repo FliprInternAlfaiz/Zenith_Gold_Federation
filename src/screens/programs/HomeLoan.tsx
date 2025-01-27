@@ -54,6 +54,7 @@ const HomeLoan = () => {
       alert("Please fill all the fields");
     } else {
       const id = `${fullName}-${contactDetails}-${Date.now()}`;
+       ToastAndroid.show("Sending...", ToastAndroid.LONG);
         await firestore().collection("homeLoanApplications").doc(id).set({
         fullName,
         dateOfBirth,

@@ -23,6 +23,7 @@ const Feedback = () => {
 
     try {
       const id = `${name}-${email}-${Date.now()}`;
+       ToastAndroid.show("Sending...", ToastAndroid.LONG);
       const response = await firestore().collection("Feedback").doc(id).set({
         name,
         email,

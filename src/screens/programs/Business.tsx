@@ -38,6 +38,7 @@ const Business = () => {
     } else {
       try {
         const id = `${ownerFullName}-${ownerContactDetails}-${Date.now()}`;
+         ToastAndroid.show("Sending...", ToastAndroid.LONG);
         await firestore().collection("businessApplications").doc(id).set({
           businessName,
           businessAddress,
