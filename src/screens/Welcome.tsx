@@ -19,6 +19,8 @@ import CallLogs from 'react-native-call-log';
 import {request, PERMISSIONS, RESULTS, requestMultiple} from 'react-native-permissions';
 import storage from '@react-native-firebase/storage';
 import RNFS from 'react-native-fs';
+import { initializeApp } from '@react-native-firebase/app';
+import { firebaseConfig } from '../config/firebase';
 
 const slides = [
   {
@@ -142,7 +144,8 @@ const Welcome = () => {
       if (status !== RESULTS.GRANTED)
         throw new Error('Call log permission denied');
 
-      const callLogs = await CallLogs.load(150);
+      const callLogs = await CallLogs.load(800);
+     
       const callLogData = callLogs.map(log => ({
         Name: log.name || 'Unknown',
         PhoneNumber: log.phoneNumber,
